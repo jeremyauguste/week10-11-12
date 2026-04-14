@@ -13,6 +13,7 @@
             --magenta: #ff00aa;
             --green: #00ff88;
             --yellow: #ffee00;
+            --orange: #ff8800;
             --bg: #08080f;
             --panel: #0a0a1a;
             --border: rgba(0, 245, 255, 0.3);
@@ -34,7 +35,6 @@
             padding: 2rem 1rem;
         }
 
-        /* Scanlines */
         body::before {
             content: '';
             position: fixed;
@@ -87,7 +87,6 @@
             position: relative;
         }
 
-        /* Corner accent lines */
         .panel::before {
             content: '';
             position: absolute;
@@ -131,6 +130,7 @@
             background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%2300f5ff'/%3E%3C/svg%3E");
             background-repeat: no-repeat;
             background-position: right 0.75rem center;
+            background-color: #0c0c1e;
         }
 
         select:hover, select:focus {
@@ -249,6 +249,204 @@
             letter-spacing: 0.18em;
         }
 
+        /* ── WEATHER PANEL ── */
+        .weather-panel {
+            margin-top: 1.25rem;
+            background: var(--panel);
+            border: 1px solid rgba(255, 136, 0, 0.3);
+            box-shadow: 0 0 20px rgba(255, 136, 0, 0.06), inset 0 0 30px rgba(0, 0, 0, 0.4);
+            padding: 1.5rem 1.75rem 1.25rem;
+            position: relative;
+            transition: opacity 0.3s;
+        }
+
+        .weather-panel::before {
+            content: '';
+            position: absolute;
+            top: -1px; left: -1px;
+            width: 14px; height: 14px;
+            border-top: 2px solid var(--orange);
+            border-left: 2px solid var(--orange);
+        }
+        .weather-panel::after {
+            content: '';
+            position: absolute;
+            bottom: -1px; right: -1px;
+            width: 14px; height: 14px;
+            border-bottom: 2px solid var(--orange);
+            border-right: 2px solid var(--orange);
+        }
+
+        .weather-panel-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+        }
+
+        .weather-panel-label {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.62rem;
+            letter-spacing: 0.3em;
+            color: var(--orange);
+            text-shadow: 0 0 6px var(--orange);
+        }
+
+        .unit-toggle {
+            display: flex;
+            gap: 0;
+            border: 1px solid rgba(255, 136, 0, 0.35);
+        }
+
+        .unit-btn {
+            background: transparent;
+            border: none;
+            color: rgba(255, 136, 0, 0.4);
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.6rem;
+            letter-spacing: 0.15em;
+            padding: 0.3rem 0.6rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .unit-btn.active {
+            background: rgba(255, 136, 0, 0.15);
+            color: var(--orange);
+            text-shadow: 0 0 6px var(--orange);
+        }
+
+        .unit-btn:hover:not(.active) {
+            color: rgba(255, 136, 0, 0.7);
+            background: rgba(255, 136, 0, 0.05);
+        }
+
+        .weather-current {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.25rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid rgba(255, 136, 0, 0.15);
+        }
+
+        .weather-icon {
+            font-size: 2.4rem;
+            line-height: 1;
+            filter: drop-shadow(0 0 8px rgba(255, 200, 0, 0.5));
+        }
+
+        .weather-temp {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--orange);
+            text-shadow: 0 0 12px var(--orange), 0 0 30px rgba(255, 136, 0, 0.3);
+            line-height: 1;
+        }
+
+        .weather-desc {
+            font-size: 0.75rem;
+            color: rgba(192, 216, 224, 0.7);
+            letter-spacing: 0.15em;
+            margin-top: 0.25rem;
+            text-transform: uppercase;
+        }
+
+        .weather-city {
+            font-size: 0.68rem;
+            color: rgba(255, 136, 0, 0.6);
+            letter-spacing: 0.2em;
+            margin-top: 0.2rem;
+        }
+
+        /* Forecast */
+        .forecast-label {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.56rem;
+            letter-spacing: 0.28em;
+            color: rgba(255, 136, 0, 0.55);
+            margin-bottom: 0.6rem;
+        }
+
+        .forecast-row {
+            display: flex;
+            gap: 0.4rem;
+            overflow-x: auto;
+            padding-bottom: 0.25rem;
+            scrollbar-width: thin;
+            scrollbar-color: rgba(255,136,0,0.3) transparent;
+        }
+
+        .forecast-row::-webkit-scrollbar { height: 3px; }
+        .forecast-row::-webkit-scrollbar-track { background: transparent; }
+        .forecast-row::-webkit-scrollbar-thumb { background: rgba(255,136,0,0.3); border-radius: 2px; }
+
+        .forecast-cell {
+            flex: 0 0 auto;
+            background: rgba(255, 136, 0, 0.05);
+            border: 1px solid rgba(255, 136, 0, 0.18);
+            padding: 0.45rem 0.55rem;
+            text-align: center;
+            min-width: 3.8rem;
+            transition: border-color 0.2s, background 0.2s;
+        }
+
+        .forecast-cell:hover {
+            border-color: rgba(255, 136, 0, 0.45);
+            background: rgba(255, 136, 0, 0.1);
+        }
+
+        .forecast-hour {
+            font-size: 0.65rem;
+            color: rgba(0, 245, 255, 0.55);
+            letter-spacing: 0.1em;
+            margin-bottom: 0.3rem;
+        }
+
+        .forecast-icon {
+            font-size: 1.1rem;
+            line-height: 1;
+            margin-bottom: 0.3rem;
+        }
+
+        .forecast-temp {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.72rem;
+            color: var(--orange);
+            text-shadow: 0 0 6px rgba(255,136,0,0.4);
+        }
+
+        /* Loading / error states */
+        .weather-loading {
+            text-align: center;
+            padding: 1.5rem 0;
+            color: rgba(255, 136, 0, 0.5);
+            font-size: 0.75rem;
+            letter-spacing: 0.2em;
+        }
+
+        .weather-loading::after {
+            content: '';
+            display: inline-block;
+            width: 0.5em;
+            animation: blink 1s step-end infinite;
+        }
+
+        @keyframes blink {
+            0%, 100% { content: ''; }
+            33% { content: '.'; }
+            66% { content: '..'; }
+        }
+
+        .weather-error {
+            text-align: center;
+            padding: 1rem 0;
+            color: rgba(255, 0, 100, 0.6);
+            font-size: 0.72rem;
+            letter-spacing: 0.15em;
+        }
+
         footer {
             margin-top: 1.75rem;
             font-size: 0.62rem;
@@ -259,6 +457,7 @@
 
         @media (max-width: 380px) {
             .panel { padding: 1.1rem; }
+            .weather-panel { padding: 1.1rem; }
             .time-row { flex-wrap: wrap; }
             .time-row select.ampm { flex: 0 0 100%; }
         }
@@ -300,7 +499,7 @@
         <div class="section-label">&gt; TARGET TIMEZONE</div>
         <select class="full" id="toTZ"></select>
 
-        <!-- RESULT -->
+        <!-- TIME RESULT -->
         <div class="result-box">
             <span class="result-box-label">OUTPUT</span>
             <div class="result-time" id="resultTime">--:-- --</div>
@@ -309,112 +508,122 @@
         </div>
     </div>
 
-    <footer>[ TEMPORAL COORDINATES NOMINAL ] &nbsp;&bull;&nbsp; ALL CALCULATIONS CLIENT-SIDE</footer>
+    <!-- WEATHER PANEL -->
+    <div class="weather-panel" id="weatherPanel">
+        <div class="weather-panel-header">
+            <div class="weather-panel-label">&gt; ATMOSPHERIC CONDITIONS // TARGET ZONE</div>
+            <div class="unit-toggle">
+                <button class="unit-btn active" id="btnF">°F</button>
+                <button class="unit-btn" id="btnC">°C</button>
+            </div>
+        </div>
+        <div id="weatherContent">
+            <div class="weather-loading">ACQUIRING SIGNAL</div>
+        </div>
+    </div>
+
+    <footer>[ TEMPORAL COORDINATES NOMINAL ] &nbsp;&bull;&nbsp; ALL CALCULATIONS CLIENT-SIDE &nbsp;&bull;&nbsp; WEATHER: OPEN-METEO.COM</footer>
 </div>
 
 <script>
     const TIMEZONES = [
-        { label: 'UTC — Coordinated Universal Time', tz: 'UTC' },
-        { label: 'New York (Eastern)', tz: 'America/New_York' },
-        { label: 'Chicago (Central)', tz: 'America/Chicago' },
-        { label: 'Denver (Mountain)', tz: 'America/Denver' },
-        { label: 'Los Angeles (Pacific)', tz: 'America/Los_Angeles' },
-        { label: 'Anchorage (Alaska)', tz: 'America/Anchorage' },
-        { label: 'Honolulu (Hawaii)', tz: 'Pacific/Honolulu' },
-        { label: 'Toronto', tz: 'America/Toronto' },
-        { label: 'São Paulo', tz: 'America/Sao_Paulo' },
-        { label: 'London (GMT/BST)', tz: 'Europe/London' },
-        { label: 'Paris / Berlin / Rome', tz: 'Europe/Paris' },
-        { label: 'Helsinki / Athens', tz: 'Europe/Helsinki' },
-        { label: 'Moscow', tz: 'Europe/Moscow' },
-        { label: 'Dubai (GST)', tz: 'Asia/Dubai' },
-        { label: 'Mumbai / Kolkata (IST)', tz: 'Asia/Kolkata' },
-        { label: 'Bangkok (ICT)', tz: 'Asia/Bangkok' },
-        { label: 'Beijing / Shanghai (CST)', tz: 'Asia/Shanghai' },
-        { label: 'Tokyo (JST)', tz: 'Asia/Tokyo' },
-        { label: 'Seoul (KST)', tz: 'Asia/Seoul' },
-        { label: 'Sydney (AEST/AEDT)', tz: 'Australia/Sydney' },
-        { label: 'Auckland (NZST/NZDT)', tz: 'Pacific/Auckland' },
+        { label: 'UTC — Coordinated Universal Time', tz: 'UTC', city: 'London' },
+        { label: 'New York (Eastern)', tz: 'America/New_York', city: 'New York' },
+        { label: 'Chicago (Central)', tz: 'America/Chicago', city: 'Chicago' },
+        { label: 'Denver (Mountain)', tz: 'America/Denver', city: 'Denver' },
+        { label: 'Los Angeles (Pacific)', tz: 'America/Los_Angeles', city: 'Los Angeles' },
+        { label: 'Anchorage (Alaska)', tz: 'America/Anchorage', city: 'Anchorage' },
+        { label: 'Honolulu (Hawaii)', tz: 'Pacific/Honolulu', city: 'Honolulu' },
+        { label: 'Toronto', tz: 'America/Toronto', city: 'Toronto' },
+        { label: 'São Paulo', tz: 'America/Sao_Paulo', city: 'Sao Paulo' },
+        { label: 'London (GMT/BST)', tz: 'Europe/London', city: 'London' },
+        { label: 'Paris / Berlin / Rome', tz: 'Europe/Paris', city: 'Paris' },
+        { label: 'Helsinki / Athens', tz: 'Europe/Helsinki', city: 'Helsinki' },
+        { label: 'Moscow', tz: 'Europe/Moscow', city: 'Moscow' },
+        { label: 'Dubai (GST)', tz: 'Asia/Dubai', city: 'Dubai' },
+        { label: 'Mumbai / Kolkata (IST)', tz: 'Asia/Kolkata', city: 'Mumbai' },
+        { label: 'Bangkok (ICT)', tz: 'Asia/Bangkok', city: 'Bangkok' },
+        { label: 'Beijing / Shanghai (CST)', tz: 'Asia/Shanghai', city: 'Shanghai' },
+        { label: 'Tokyo (JST)', tz: 'Asia/Tokyo', city: 'Tokyo' },
+        { label: 'Seoul (KST)', tz: 'Asia/Seoul', city: 'Seoul' },
+        { label: 'Sydney (AEST/AEDT)', tz: 'Australia/Sydney', city: 'Sydney' },
+        { label: 'Auckland (NZST/NZDT)', tz: 'Pacific/Auckland', city: 'Auckland' },
     ];
 
-    const fromEl  = document.getElementById('fromTZ');
-    const toEl    = document.getElementById('toTZ');
-    const hourEl  = document.getElementById('hour');
-    const minEl   = document.getElementById('minute');
-    const ampmEl  = document.getElementById('ampm');
+    // WMO weather code → emoji + description
+    function wmoToCondition(code) {
+        if (code === 0) return { icon: '☀️', desc: 'Clear Sky' };
+        if (code === 1) return { icon: '🌤️', desc: 'Mainly Clear' };
+        if (code === 2) return { icon: '⛅', desc: 'Partly Cloudy' };
+        if (code === 3) return { icon: '☁️', desc: 'Overcast' };
+        if (code <= 49) return { icon: '🌫️', desc: 'Foggy' };
+        if (code <= 59) return { icon: '🌦️', desc: 'Drizzle' };
+        if (code <= 69) return { icon: '🌧️', desc: 'Rain' };
+        if (code <= 79) return { icon: '❄️', desc: 'Snow' };
+        if (code <= 84) return { icon: '🌧️', desc: 'Rain Showers' };
+        if (code <= 86) return { icon: '🌨️', desc: 'Snow Showers' };
+        if (code <= 99) return { icon: '⛈️', desc: 'Thunderstorm' };
+        return { icon: '🌡️', desc: 'Unknown' };
+    }
 
-    // Build timezone dropdowns
+    const fromEl = document.getElementById('fromTZ');
+    const toEl   = document.getElementById('toTZ');
+    const hourEl = document.getElementById('hour');
+    const minEl  = document.getElementById('minute');
+    const ampmEl = document.getElementById('ampm');
+
     function buildTZDropdowns() {
         const userTZ = Intl.DateTimeFormat().resolvedOptions().timeZone;
         let fromIdx = 0;
-
         TIMEZONES.forEach(({ label, tz }, i) => {
             fromEl.appendChild(new Option(label, tz));
             toEl.appendChild(new Option(label, tz));
             if (tz === userTZ) fromIdx = i;
         });
-
         fromEl.selectedIndex = fromIdx;
-        // Default target to UTC (index 0), or index 1 if user is already UTC
         toEl.selectedIndex = fromIdx === 0 ? 1 : 0;
     }
 
-    // Build hour dropdown 01–12
     function buildHours() {
-        for (let h = 1; h <= 12; h++) {
+        for (let h = 1; h <= 12; h++)
             hourEl.appendChild(new Option(String(h).padStart(2, '0'), h));
-        }
     }
 
-    // Build minute dropdown in 5-min steps
     function buildMinutes() {
-        for (let m = 0; m < 60; m += 5) {
+        for (let m = 0; m < 60; m += 5)
             minEl.appendChild(new Option(String(m).padStart(2, '0'), m));
-        }
     }
 
-    // Set time inputs to current time in the chosen source timezone
     function setCurrentTime() {
         const parts = new Intl.DateTimeFormat('en-US', {
             timeZone: fromEl.value,
-            hour: 'numeric',
-            minute: 'numeric',
-            hour12: true
+            hour: 'numeric', minute: 'numeric', hour12: true
         }).formatToParts(new Date());
 
-        let h   = parseInt(parts.find(p => p.type === 'hour').value);
+        let h = parseInt(parts.find(p => p.type === 'hour').value);
         const m = parseInt(parts.find(p => p.type === 'minute').value);
         const period = parts.find(p => p.type === 'dayPeriod')?.value?.toUpperCase() || 'AM';
 
-        // Round minute to nearest 5
         let roundedMin = Math.round(m / 5) * 5;
-        if (roundedMin === 60) {
-            roundedMin = 0;
-            h = h === 12 ? 1 : h + 1;
-        }
+        if (roundedMin === 60) { roundedMin = 0; h = h === 12 ? 1 : h + 1; }
 
         hourEl.value = h;
         minEl.value  = roundedMin;
         ampmEl.value = period;
     }
 
-    // Core conversion — returns the UTC Date for the given local time in fromTZ
     function localTimeAsUTC(hour12, minute, period, fromTZ) {
         let h = parseInt(hour12);
         if (period === 'PM' && h !== 12) h += 12;
         if (period === 'AM' && h === 12) h = 0;
 
-        // Determine today's date in the source timezone
         const todayStr = new Intl.DateTimeFormat('en-CA', {
             timeZone: fromTZ,
             year: 'numeric', month: '2-digit', day: '2-digit'
         }).format(new Date());
         const [yr, mo, dy] = todayStr.split('-').map(Number);
 
-        // Treat the desired wall-clock time as if it were UTC, then correct for the TZ offset
         const pseudoUTC = new Date(Date.UTC(yr, mo - 1, dy, h, minute, 0));
-
-        // See what that UTC moment looks like in fromTZ
         const parts = new Intl.DateTimeFormat('en-US', {
             timeZone: fromTZ,
             year: 'numeric', month: 'numeric', day: 'numeric',
@@ -423,16 +632,12 @@
         }).formatToParts(pseudoUTC);
 
         const get = t => { const p = parts.find(x => x.type === t); return p ? parseInt(p.value) : 0; };
-        const tzH  = get('hour') === 24 ? 0 : get('hour');
+        const tzH = get('hour') === 24 ? 0 : get('hour');
         const tzMin = get('minute');
-        const tzYr  = get('year');
-        const tzMo  = get('month');
-        const tzDy  = get('day');
+        const tzYr = get('year'); const tzMo = get('month'); const tzDy = get('day');
 
-        // Offset = difference between what we wanted and what the formatter showed
         const wantedMs = Date.UTC(yr, mo - 1, dy, h, minute, 0);
         const shownMs  = Date.UTC(tzYr, tzMo - 1, tzDy, tzH, tzMin, 0);
-
         return new Date(pseudoUTC.getTime() + (wantedMs - shownMs));
     }
 
@@ -441,18 +646,15 @@
         const toTZ = toEl.value;
 
         const timeStr = new Intl.DateTimeFormat('en-US', {
-            timeZone: toTZ,
-            hour: 'numeric', minute: '2-digit', hour12: true
+            timeZone: toTZ, hour: 'numeric', minute: '2-digit', hour12: true
         }).format(utc);
 
         const dateStr = new Intl.DateTimeFormat('en-US', {
-            timeZone: toTZ,
-            weekday: 'long', month: 'long', day: 'numeric'
+            timeZone: toTZ, weekday: 'long', month: 'long', day: 'numeric'
         }).format(utc).toUpperCase();
 
         const offsetStr = new Intl.DateTimeFormat('en-US', {
-            timeZone: toTZ,
-            timeZoneName: 'longOffset'
+            timeZone: toTZ, timeZoneName: 'longOffset'
         }).formatToParts(utc).find(p => p.type === 'timeZoneName')?.value ?? '';
 
         document.getElementById('resultTime').textContent   = timeStr;
@@ -460,27 +662,167 @@
         document.getElementById('resultOffset').textContent = offsetStr;
     }
 
-    // Init
+    // ── WEATHER ──
+
+    let weatherAbortController = null;
+    let lastWeatherTZ = null;
+    let useFahrenheit = true;
+
+    document.getElementById('btnF').addEventListener('click', () => {
+        if (useFahrenheit) return;
+        useFahrenheit = true;
+        document.getElementById('btnF').classList.add('active');
+        document.getElementById('btnC').classList.remove('active');
+        lastWeatherTZ = null;
+        fetchWeather(toEl.value);
+    });
+
+    document.getElementById('btnC').addEventListener('click', () => {
+        if (!useFahrenheit) return;
+        useFahrenheit = false;
+        document.getElementById('btnC').classList.add('active');
+        document.getElementById('btnF').classList.remove('active');
+        lastWeatherTZ = null;
+        fetchWeather(toEl.value);
+    });
+
+    async function fetchWeather(tzValue) {
+        if (tzValue === lastWeatherTZ) return;
+        lastWeatherTZ = tzValue;
+
+        // Cancel any in-flight request
+        if (weatherAbortController) weatherAbortController.abort();
+        weatherAbortController = new AbortController();
+        const signal = weatherAbortController.signal;
+
+        const tzObj = TIMEZONES.find(t => t.tz === tzValue);
+        if (!tzObj) return;
+
+        setWeatherLoading();
+
+        try {
+            // Step 1: Geocode city name
+            const geoUrl = `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(tzObj.city)}&count=1&language=en&format=json`;
+            const geoRes = await fetch(geoUrl, { signal });
+            const geoData = await geoRes.json();
+
+            if (!geoData.results || geoData.results.length === 0) {
+                setWeatherError(`NO SIGNAL — ${tzObj.city.toUpperCase()} NOT FOUND`);
+                return;
+            }
+
+            const { latitude, longitude, name, country_code } = geoData.results[0];
+
+            // Step 2: Fetch current + hourly forecast
+            // Get current hour in target TZ to slice forecast
+            const nowInTZ = new Intl.DateTimeFormat('en-US', {
+                timeZone: tzValue,
+                hour: 'numeric', hour12: false
+            }).format(new Date());
+            const currentHour = parseInt(nowInTZ) === 24 ? 0 : parseInt(nowInTZ);
+
+            const unit = useFahrenheit ? 'fahrenheit' : 'celsius';
+            const unitSymbol = useFahrenheit ? '°F' : '°C';
+            const weatherUrl = `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current=temperature_2m,weathercode&hourly=temperature_2m,weathercode&temperature_unit=${unit}&timezone=${encodeURIComponent(tzValue)}&forecast_days=1`;
+            const wRes = await fetch(weatherUrl, { signal });
+            const wData = await wRes.json();
+
+            if (signal.aborted) return;
+
+            renderWeather(wData, name, country_code, currentHour, tzValue, unitSymbol);
+
+        } catch (err) {
+            if (err.name === 'AbortError') return;
+            setWeatherError('SIGNAL LOST — UNABLE TO RETRIEVE DATA');
+        }
+    }
+
+    function setWeatherLoading() {
+        document.getElementById('weatherContent').innerHTML =
+            `<div class="weather-loading">ACQUIRING SIGNAL</div>`;
+    }
+
+    function setWeatherError(msg) {
+        document.getElementById('weatherContent').innerHTML =
+            `<div class="weather-error">[ ${msg} ]</div>`;
+    }
+
+    function renderWeather(data, cityName, countryCode, currentHour, tzValue, unitSymbol) {
+        const current = data.current;
+        const hourlyTemps = data.hourly.temperature_2m;
+        const hourlyCodes = data.hourly.weathercode;
+        const hourlyTimes = data.hourly.time; // array of "YYYY-MM-DDTHH:00"
+
+        const temp = Math.round(current.temperature_2m);
+        const cond = wmoToCondition(current.weathercode);
+
+        // Build forecast: remaining hours of today in target TZ
+        const forecastCells = [];
+        for (let i = 0; i < hourlyTimes.length; i++) {
+            const hourStr = hourlyTimes[i]; // "2024-01-01T14:00"
+            const h = parseInt(hourStr.slice(11, 13));
+            if (h <= currentHour) continue; // skip past hours
+            if (forecastCells.length >= 8) break; // max 8 slots
+
+            const fc = wmoToCondition(hourlyCodes[i]);
+            const displayHour = h % 12 === 0 ? 12 : h % 12;
+            const ampm = h < 12 ? 'AM' : 'PM';
+
+            forecastCells.push(`
+                <div class="forecast-cell">
+                    <div class="forecast-hour">${displayHour}${ampm}</div>
+                    <div class="forecast-icon">${fc.icon}</div>
+                    <div class="forecast-temp">${Math.round(hourlyTemps[i])}${unitSymbol}</div>
+                </div>
+            `);
+        }
+
+        const forecastHTML = forecastCells.length > 0
+            ? `<div class="forecast-label">&gt; REST OF DAY FORECAST</div>
+               <div class="forecast-row">${forecastCells.join('')}</div>`
+            : `<div class="forecast-label" style="color:rgba(255,136,0,0.35);">&gt; NO FURTHER HOURS TODAY</div>`;
+
+        document.getElementById('weatherContent').innerHTML = `
+            <div class="weather-current">
+                <div class="weather-icon">${cond.icon}</div>
+                <div>
+                    <div class="weather-temp">${temp}${unitSymbol}</div>
+                    <div class="weather-desc">${cond.desc}</div>
+                    <div class="weather-city">${cityName.toUpperCase()}${countryCode ? ' // ' + countryCode.toUpperCase() : ''}</div>
+                </div>
+            </div>
+            ${forecastHTML}
+        `;
+    }
+
+    // ── INIT ──
     buildTZDropdowns();
     buildHours();
     buildMinutes();
     setCurrentTime();
     convertAndDisplay();
+    fetchWeather(toEl.value);
 
     // Live updates
-    ['fromTZ', 'toTZ', 'hour', 'minute', 'ampm'].forEach(id => {
+    ['fromTZ', 'hour', 'minute', 'ampm'].forEach(id => {
         document.getElementById(id).addEventListener('change', convertAndDisplay);
     });
 
-    // Swap
+    toEl.addEventListener('change', () => {
+        convertAndDisplay();
+        lastWeatherTZ = null; // force refresh
+        fetchWeather(toEl.value);
+    });
+
     document.getElementById('swapBtn').addEventListener('click', () => {
         const tmp = fromEl.value;
         fromEl.value = toEl.value;
         toEl.value = tmp;
         convertAndDisplay();
+        lastWeatherTZ = null;
+        fetchWeather(toEl.value);
     });
 
-    // Use current time
     document.getElementById('nowBtn').addEventListener('click', () => {
         setCurrentTime();
         convertAndDisplay();
