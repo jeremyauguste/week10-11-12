@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TIMEZONE//CONVERT</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        :root {
+            --cyan: #00f5ff;
+            --magenta: #ff00aa;
+            --green: #00ff88;
+            --yellow: #ffee00;
+            --bg: #08080f;
+            --panel: #0a0a1a;
+            --border: rgba(0, 245, 255, 0.3);
+            --text: #c0d8e0;
+        }
+
+        body {
+            background-color: var(--bg);
+            background-image:
+                linear-gradient(rgba(0, 245, 255, 0.04) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 245, 255, 0.04) 1px, transparent 1px);
+            background-size: 40px 40px;
+            color: var(--text);
+            font-family: 'Share Tech Mono', monospace;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 2rem 1rem;
+        }
+
+        /* Scanlines */
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background: repeating-linear-gradient(
+                0deg,
+                transparent,
+                transparent 2px,
+                rgba(0, 0, 0, 0.12) 2px,
+                rgba(0, 0, 0, 0.12) 4px
+            );
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .container {
+            position: relative;
+            z-index: 1;
+            width: 100%;
+            max-width: 580px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: clamp(1.6rem, 6vw, 2.6rem);
+            font-weight: 900;
+            color: var(--cyan);
+            text-shadow: 0 0 10px var(--cyan), 0 0 35px rgba(0, 245, 255, 0.35);
+            letter-spacing: 0.08em;
+        }
+
+        .subtitle {
+            color: var(--magenta);
+            font-size: 0.7rem;
+            letter-spacing: 0.35em;
+            text-shadow: 0 0 8px var(--magenta);
+            margin-top: 0.3rem;
+        }
+
+        .panel {
+            background: var(--panel);
+            border: 1px solid var(--border);
+            box-shadow: 0 0 25px rgba(0, 245, 255, 0.08), inset 0 0 30px rgba(0, 0, 0, 0.4);
+            padding: 1.75rem;
+            position: relative;
+        }
+
+        /* Corner accent lines */
+        .panel::before {
+            content: '';
+            position: absolute;
+            top: -1px; left: -1px;
+            width: 16px; height: 16px;
+            border-top: 2px solid var(--cyan);
+            border-left: 2px solid var(--cyan);
+        }
+        .panel::after {
+            content: '';
+            position: absolute;
+            bottom: -1px; right: -1px;
+            width: 16px; height: 16px;
+            border-bottom: 2px solid var(--cyan);
+            border-right: 2px solid var(--cyan);
+        }
+
+        .section-label {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.62rem;
+            letter-spacing: 0.3em;
+            color: var(--magenta);
+            text-shadow: 0 0 6px var(--magenta);
+            margin-bottom: 0.6rem;
+        }
+
+        .spacer { margin-top: 1.1rem; }
+
+        select {
+            background: #0c0c1e;
+            border: 1px solid rgba(0, 245, 255, 0.22);
+            color: var(--cyan);
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 0.9rem;
+            padding: 0.5rem 2rem 0.5rem 0.75rem;
+            cursor: pointer;
+            outline: none;
+            transition: border-color 0.2s, box-shadow 0.2s;
+            appearance: none;
+            -webkit-appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%2300f5ff'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 0.75rem center;
+        }
+
+        select:hover, select:focus {
+            border-color: var(--cyan);
+            box-shadow: 0 0 10px rgba(0, 245, 255, 0.25);
+        }
+
+        select.full { width: 100%; }
+
+        .time-row {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .time-row select { flex: 1; }
+        .time-row select.ampm { flex: 0 0 5.5rem; }
+
+        .btn-now {
+            width: 100%;
+            margin-top: 0.6rem;
+            background: transparent;
+            border: 1px solid rgba(0, 245, 255, 0.25);
+            color: rgba(0, 245, 255, 0.7);
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 0.78rem;
+            padding: 0.4rem;
+            letter-spacing: 0.12em;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-now:hover {
+            border-color: var(--cyan);
+            color: var(--cyan);
+            box-shadow: 0 0 10px rgba(0, 245, 255, 0.2);
+            background: rgba(0, 245, 255, 0.04);
+        }
+
+        .divider {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin: 1.4rem 0;
+        }
+
+        .divider-line {
+            flex: 1;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(0, 245, 255, 0.2), transparent);
+        }
+
+        .btn-swap {
+            background: transparent;
+            border: 1px solid rgba(255, 0, 170, 0.35);
+            color: var(--magenta);
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.62rem;
+            letter-spacing: 0.15em;
+            padding: 0.4rem 0.9rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-shadow: 0 0 6px var(--magenta);
+            white-space: nowrap;
+        }
+
+        .btn-swap:hover {
+            border-color: var(--magenta);
+            box-shadow: 0 0 12px rgba(255, 0, 170, 0.25);
+            background: rgba(255, 0, 170, 0.05);
+        }
+
+        .result-box {
+            position: relative;
+            margin-top: 1.5rem;
+            background: #060610;
+            border: 1px solid rgba(0, 255, 136, 0.28);
+            box-shadow: 0 0 18px rgba(0, 255, 136, 0.07);
+            padding: 1.5rem 1rem 1.25rem;
+            text-align: center;
+        }
+
+        .result-box-label {
+            position: absolute;
+            top: -0.6rem;
+            left: 1rem;
+            background: #060610;
+            padding: 0 0.5rem;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.58rem;
+            letter-spacing: 0.35em;
+            color: var(--green);
+            text-shadow: 0 0 6px var(--green);
+        }
+
+        .result-time {
+            font-family: 'Orbitron', sans-serif;
+            font-size: clamp(2.2rem, 9vw, 3.8rem);
+            font-weight: 700;
+            color: var(--green);
+            text-shadow: 0 0 15px var(--green), 0 0 45px rgba(0, 255, 136, 0.25);
+            line-height: 1;
+            margin-bottom: 0.5rem;
+        }
+
+        .result-date {
+            font-size: 0.82rem;
+            color: var(--yellow);
+            text-shadow: 0 0 6px rgba(255, 238, 0, 0.45);
+            letter-spacing: 0.1em;
+            margin-bottom: 0.3rem;
+        }
+
+        .result-offset {
+            font-size: 0.72rem;
+            color: rgba(0, 245, 255, 0.6);
+            letter-spacing: 0.18em;
+        }
+
+        footer {
+            margin-top: 1.75rem;
+            font-size: 0.62rem;
+            letter-spacing: 0.2em;
+            color: rgba(0, 245, 255, 0.18);
+            text-align: center;
+        }
+
+        @media (max-width: 380px) {
+            .panel { padding: 1.1rem; }
+            .time-row { flex-wrap: wrap; }
+            .time-row select.ampm { flex: 0 0 100%; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <header>
+        <h1>TIMEZONE//CONVERT</h1>
+        <p class="subtitle">CHRONOLOGICAL TRANSLATION UNIT &mdash; v2.0</p>
+    </header>
+
+    <div class="panel">
+        <!-- SOURCE -->
+        <div class="section-label">&gt; SOURCE TIMEZONE</div>
+        <select class="full" id="fromTZ"></select>
+
+        <div class="spacer">
+            <div class="section-label">&gt; INPUT TIME</div>
+            <div class="time-row">
+                <select id="hour"></select>
+                <select id="minute"></select>
+                <select class="ampm" id="ampm">
+                    <option value="AM">AM</option>
+                    <option value="PM">PM</option>
+                </select>
+            </div>
+            <button class="btn-now" id="nowBtn">&gt; USE CURRENT LOCAL TIME</button>
+        </div>
+
+        <!-- SWAP -->
+        <div class="divider">
+            <div class="divider-line"></div>
+            <button class="btn-swap" id="swapBtn">&#8645; SWAP ZONES</button>
+            <div class="divider-line"></div>
+        </div>
+
+        <!-- TARGET -->
+        <div class="section-label">&gt; TARGET TIMEZONE</div>
+        <select class="full" id="toTZ"></select>
+
+        <!-- RESULT -->
+        <div class="result-box">
+            <span class="result-box-label">OUTPUT</span>
+            <div class="result-time" id="resultTime">--:-- --</div>
+            <div class="result-date" id="resultDate">&mdash;</div>
+            <div class="result-offset" id="resultOffset">&mdash;</div>
+        </div>
+    </div>
+
+    <footer>[ TEMPORAL COORDINATES NOMINAL ] &nbsp;&bull;&nbsp; ALL CALCULATIONS CLIENT-SIDE</footer>
+</div>
+
+<script>
+    const TIMEZONES = [
+        { label: 'UTC — Coordinated Universal Time', tz: 'UTC' },
+        { label: 'New York (Eastern)', tz: 'America/New_York' },
+        { label: 'Chicago (Central)', tz: 'America/Chicago' },
+        { label: 'Denver (Mountain)', tz: 'America/Denver' },
+        { label: 'Los Angeles (Pacific)', tz: 'America/Los_Angeles' },
+        { label: 'Anchorage (Alaska)', tz: 'America/Anchorage' },
+        { label: 'Honolulu (Hawaii)', tz: 'Pacific/Honolulu' },
+        { label: 'Toronto', tz: 'America/Toronto' },
+        { label: 'São Paulo', tz: 'America/Sao_Paulo' },
+        { label: 'London (GMT/BST)', tz: 'Europe/London' },
+        { label: 'Paris / Berlin / Rome', tz: 'Europe/Paris' },
+        { label: 'Helsinki / Athens', tz: 'Europe/Helsinki' },
+        { label: 'Moscow', tz: 'Europe/Moscow' },
+        { label: 'Dubai (GST)', tz: 'Asia/Dubai' },
+        { label: 'Mumbai / Kolkata (IST)', tz: 'Asia/Kolkata' },
+        { label: 'Bangkok (ICT)', tz: 'Asia/Bangkok' },
+        { label: 'Beijing / Shanghai (CST)', tz: 'Asia/Shanghai' },
+        { label: 'Tokyo (JST)', tz: 'Asia/Tokyo' },
+        { label: 'Seoul (KST)', tz: 'Asia/Seoul' },
+        { label: 'Sydney (AEST/AEDT)', tz: 'Australia/Sydney' },
+        { label: 'Auckland (NZST/NZDT)', tz: 'Pacific/Auckland' },
+    ];
+
+    const fromEl  = document.getElementById('fromTZ');
+    const toEl    = document.getElementById('toTZ');
+    const hourEl  = document.getElementById('hour');
+    const minEl   = document.getElementById('minute');
+    const ampmEl  = document.getElementById('ampm');
+
+    // Build timezone dropdowns
+    function buildTZDropdowns() {
+        const userTZ = Intl.DateTimeFormat().resolvedOptions().timeZone;
+        let fromIdx = 0;
+
+        TIMEZONES.forEach(({ label, tz }, i) => {
+            fromEl.appendChild(new Option(label, tz));
+            toEl.appendChild(new Option(label, tz));
+            if (tz === userTZ) fromIdx = i;
+        });
+
+        fromEl.selectedIndex = fromIdx;
+        // Default target to UTC (index 0), or index 1 if user is already UTC
+        toEl.selectedIndex = fromIdx === 0 ? 1 : 0;
+    }
+
+    // Build hour dropdown 01–12
+    function buildHours() {
+        for (let h = 1; h <= 12; h++) {
+            hourEl.appendChild(new Option(String(h).padStart(2, '0'), h));
+        }
+    }
+
+    // Build minute dropdown in 5-min steps
+    function buildMinutes() {
+        for (let m = 0; m < 60; m += 5) {
+            minEl.appendChild(new Option(String(m).padStart(2, '0'), m));
+        }
+    }
+
+    // Set time inputs to current time in the chosen source timezone
+    function setCurrentTime() {
+        const parts = new Intl.DateTimeFormat('en-US', {
+            timeZone: fromEl.value,
+            hour: 'numeric',
+            minute: 'numeric',
+            hour12: true
+        }).formatToParts(new Date());
+
+        let h   = parseInt(parts.find(p => p.type === 'hour').value);
+        const m = parseInt(parts.find(p => p.type === 'minute').value);
+        const period = parts.find(p => p.type === 'dayPeriod')?.value?.toUpperCase() || 'AM';
+
+        // Round minute to nearest 5
+        let roundedMin = Math.round(m / 5) * 5;
+        if (roundedMin === 60) {
+            roundedMin = 0;
+            h = h === 12 ? 1 : h + 1;
+        }
+
+        hourEl.value = h;
+        minEl.value  = roundedMin;
+        ampmEl.value = period;
+    }
+
+    // Core conversion — returns the UTC Date for the given local time in fromTZ
+    function localTimeAsUTC(hour12, minute, period, fromTZ) {
+        let h = parseInt(hour12);
+        if (period === 'PM' && h !== 12) h += 12;
+        if (period === 'AM' && h === 12) h = 0;
+
+        // Determine today's date in the source timezone
+        const todayStr = new Intl.DateTimeFormat('en-CA', {
+            timeZone: fromTZ,
+            year: 'numeric', month: '2-digit', day: '2-digit'
+        }).format(new Date());
+        const [yr, mo, dy] = todayStr.split('-').map(Number);
+
+        // Treat the desired wall-clock time as if it were UTC, then correct for the TZ offset
+        const pseudoUTC = new Date(Date.UTC(yr, mo - 1, dy, h, minute, 0));
+
+        // See what that UTC moment looks like in fromTZ
+        const parts = new Intl.DateTimeFormat('en-US', {
+            timeZone: fromTZ,
+            year: 'numeric', month: 'numeric', day: 'numeric',
+            hour: 'numeric', minute: 'numeric', second: 'numeric',
+            hour12: false
+        }).formatToParts(pseudoUTC);
+
+        const get = t => { const p = parts.find(x => x.type === t); return p ? parseInt(p.value) : 0; };
+        const tzH  = get('hour') === 24 ? 0 : get('hour');
+        const tzMin = get('minute');
+        const tzYr  = get('year');
+        const tzMo  = get('month');
+        const tzDy  = get('day');
+
+        // Offset = difference between what we wanted and what the formatter showed
+        const wantedMs = Date.UTC(yr, mo - 1, dy, h, minute, 0);
+        const shownMs  = Date.UTC(tzYr, tzMo - 1, tzDy, tzH, tzMin, 0);
+
+        return new Date(pseudoUTC.getTime() + (wantedMs - shownMs));
+    }
+
+    function convertAndDisplay() {
+        const utc = localTimeAsUTC(hourEl.value, minEl.value, ampmEl.value, fromEl.value);
+        const toTZ = toEl.value;
+
+        const timeStr = new Intl.DateTimeFormat('en-US', {
+            timeZone: toTZ,
+            hour: 'numeric', minute: '2-digit', hour12: true
+        }).format(utc);
+
+        const dateStr = new Intl.DateTimeFormat('en-US', {
+            timeZone: toTZ,
+            weekday: 'long', month: 'long', day: 'numeric'
+        }).format(utc).toUpperCase();
+
+        const offsetStr = new Intl.DateTimeFormat('en-US', {
+            timeZone: toTZ,
+            timeZoneName: 'longOffset'
+        }).formatToParts(utc).find(p => p.type === 'timeZoneName')?.value ?? '';
+
+        document.getElementById('resultTime').textContent   = timeStr;
+        document.getElementById('resultDate').textContent   = dateStr;
+        document.getElementById('resultOffset').textContent = offsetStr;
+    }
+
+    // Init
+    buildTZDropdowns();
+    buildHours();
+    buildMinutes();
+    setCurrentTime();
+    convertAndDisplay();
+
+    // Live updates
+    ['fromTZ', 'toTZ', 'hour', 'minute', 'ampm'].forEach(id => {
+        document.getElementById(id).addEventListener('change', convertAndDisplay);
+    });
+
+    // Swap
+    document.getElementById('swapBtn').addEventListener('click', () => {
+        const tmp = fromEl.value;
+        fromEl.value = toEl.value;
+        toEl.value = tmp;
+        convertAndDisplay();
+    });
+
+    // Use current time
+    document.getElementById('nowBtn').addEventListener('click', () => {
+        setCurrentTime();
+        convertAndDisplay();
+    });
+</script>
+</body>
+</html>
